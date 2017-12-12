@@ -75,9 +75,9 @@ func work(ctx context.Context, id int, host, addr string, in <-chan string, wg *
 	tmtotal := float64(0)
 	defer func() {
 		if count > 0 {
-			fmt.Printf("-> [worker %d] Avg resp time: %f ms\n", id, tmtotal/float64(count))
+			fmt.Printf("-> [worker %d] Avg resp time: %f ms (total count: %d)\n", id, tmtotal/float64(count), count)
 		} else {
-			fmt.Printf("-> [worker %d] Avg resp time: ---\n", id)
+			fmt.Printf("-> [worker %d] Avg resp time: -- ms (total count: %d)\n", id, count)
 		}
 	}()
 	defer wg.Done()
@@ -89,7 +89,7 @@ func work(ctx context.Context, id int, host, addr string, in <-chan string, wg *
 		case <-ctx.Done():
 			return
 		case <-tc.C:
-			fmt.Printf("-> [worker %d] current count: %d (avg: %f ms)\n", id, count, tmtotal/float64(count))
+			fmt.Printf("-> [worker %d] Avg resp time: %f ms (current count: %d)\n", id, tmtotal/float64(count), count)
 		case url := <-in:
 			tm0 := time.Now().UnixNano()
 			mc.Get(url)
